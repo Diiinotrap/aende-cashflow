@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AENDE CASHFLOW</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navigasi utama">
+        <div class="brand">
+          <button class="icon-button" type="button" aria-label="Menu">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <span>AENDE <strong>CASHFLOW</strong></span>
+        </div>
+        <nav class="nav-list">
+          <a href="#dashboard" class="active">Dashboard</a>
+          <a href="#input">Input Transaksi</a>
+          <a href="#pengeluaran">Pengeluaran</a>
+          <a href="#pemasukan">Pemasukan</a>
+          <a href="#mingguan">Laporan Mingguan</a>
+          <a href="#spreadsheet">Google Sheets</a>
+        </nav>
+        <div class="account-card">
+          <span class="avatar">AD</span>
+          <div>
+            <strong>Admin</strong>
+            <small>admin@aende.id</small>
+          </div>
+        </div>
+      </aside>
+
+      <main class="workspace" id="dashboard">
+        <header class="topbar">
+          <div>
+            <h1>AENDE CASHFLOW</h1>
+            <p>Laporan pemasukan, pengeluaran, nota, dan rekap mingguan perusahaan.</p>
+          </div>
+          <div class="topbar-actions">
+            <button class="secondary-button" id="seedButton" type="button">Isi Data Contoh</button>
+            <button class="primary-button" id="exportButton" type="button">Export PDF</button>
+          </div>
+        </header>
+
+        <section class="metric-grid" aria-label="Ringkasan keuangan">
+          <article class="metric">
+            <span>Saldo Saat Ini</span>
+            <strong id="metricBalance">Rp 0</strong>
+          </article>
+          <article class="metric income">
+            <span>Pemasukan Bulan Ini</span>
+            <strong id="metricIncome">Rp 0</strong>
+          </article>
+          <article class="metric expense">
+            <span>Pengeluaran Bulan Ini</span>
+            <strong id="metricExpense">Rp 0</strong>
+          </article>
+          <article class="metric">
+            <span>Net Cashflow Mingguan</span>
+            <strong id="metricWeekly">Rp 0</strong>
+          </article>
+        </section>
+
+        <div class="content-grid">
+          <section class="panel form-panel" id="input">
+            <div class="section-heading">
+              <h2>Input Transaksi</h2>
+              <span id="syncBadge">Mode lokal</span>
+            </div>
+            <form id="transactionForm">
+              <fieldset class="segmented-control">
+                <legend>Tipe Transaksi</legend>
+                <label>
+                  <input type="radio" name="type" value="expense" checked />
+                  <span>Pengeluaran</span>
+                </label>
+                <label>
+                  <input type="radio" name="type" value="income" />
+                  <span>Pemasukan</span>
+                </label>
+              </fieldset>
+
+              <label class="field">
+                <span>Tanggal</span>
+                <input required type="date" name="date" />
+              </label>
+              <label class="field">
+                <span>Kategori</span>
+                <select required name="category">
+                  <option value="">Pilih kategori</option>
+                  <option>Operasional</option>
+                  <option>Transportasi</option>
+                  <option>Konsumsi</option>
+                  <option>Pendapatan</option>
+                  <option>Penjualan</option>
+                  <option>Project</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Deskripsi</span>
+                <textarea required name="description" rows="3" placeholder="Contoh: Pembelian ATK kantor"></textarea>
+              </label>
+              <label class="field">
+                <span>Jumlah (Rp)</span>
+                <input required min="1" step="1" inputmode="numeric" type="number" name="amount" placeholder="Contoh: 150000" />
+              </label>
+              <label class="field">
+                <span>Metode Pembayaran</span>
+                <select required name="paymentMethod">
+                  <option value="">Pilih metode</option>
+                  <option>Tunai</option>
+                  <option>Transfer Bank</option>
+                  <option>Kartu Debit</option>
+                  <option>E-Wallet</option>
+                </select>
+              </label>
+              <label class="upload-box" for="receiptInput">
+                <input id="receiptInput" type="file" name="receipt" accept="image/*" />
+                <span class="upload-icon">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l4.5-5 3.5 4 2.5-3 5.5 6H4z"/><path d="M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M8 8h.01"/></svg>
+                </span>
+                <strong>Foto Nota</strong>
+                <small id="receiptName">Klik untuk upload JPG/PNG maks. 5MB</small>
+              </label>
+              <div class="form-actions">
+                <button class="secondary-button" type="reset">Reset</button>
+                <button class="primary-button" type="submit">Simpan Transaksi</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel report-panel" id="mingguan">
+            <div class="section-heading">
+              <h2>Laporan Mingguan</h2>
+              <span id="weekRange">Minggu ini</span>
+            </div>
+            <div class="weekly-summary">
+              <div><span>Total Pemasukan</span><strong class="positive" id="weeklyIncome">Rp 0</strong></div>
+              <div><span>Total Pengeluaran</span><strong class="negative" id="weeklyExpense">Rp 0</strong></div>
+              <div><span>Net Cashflow</span><strong id="weeklyNet">Rp 0</strong></div>
+            </div>
+            <div class="bar-chart" aria-label="Perbandingan pemasukan dan pengeluaran">
+              <span id="incomeBar"></span>
+              <span id="expenseBar"></span>
+            </div>
+            <div class="table-wrap" id="pengeluaran">
+              <div class="section-heading tight">
+                <h3>Laporan Pengeluaran</h3>
+                <span id="expenseCount">0 item</span>
+              </div>
+              <table>
+                <thead><tr><th>Tanggal</th><th>Deskripsi</th><th>Kategori</th><th>Nota</th><th>Jumlah</th></tr></thead>
+                <tbody id="expenseRows"></tbody>
+              </table>
+            </div>
+            <div class="table-wrap" id="pemasukan">
+              <div class="section-heading tight">
+                <h3>Laporan Pemasukan</h3>
+                <span id="incomeCount">0 item</span>
+              </div>
+              <table>
+                <thead><tr><th>Tanggal</th><th>Deskripsi</th><th>Kategori</th><th>Nota</th><th>Jumlah</th></tr></thead>
+                <tbody id="incomeRows"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <aside class="side-panels">
+            <section class="panel action-panel">
+              <div class="action-icon pdf">PDF</div>
+              <div>
+                <h2>Export PDF</h2>
+                <p>Gunakan tombol export untuk membuat laporan siap cetak atau simpan sebagai PDF.</p>
+              </div>
+            </section>
+            <section class="panel action-panel" id="spreadsheet">
+              <div class="action-icon sheets">GS</div>
+              <div>
+                <h2>Sinkron Google Sheets</h2>
+                <p id="sheetsStatus">Data akan otomatis dikirim ke Google Spreadsheet jika webhook aktif.</p>
+                <button class="secondary-button compact" id="resyncButton" type="button">Sinkron Sekarang</button>
+              </div>
+            </section>
+            <section class="panel daily-panel">
+              <h2>Ringkasan Harian</h2>
+              <div id="dailyRows" class="daily-list"></div>
+            </section>
+          </aside>
+        </div>
+      </main>
+    </div>
+    <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+    <script src="/app.js"></script>
+  </body>
+</html>
