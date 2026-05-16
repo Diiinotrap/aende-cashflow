@@ -40,7 +40,12 @@ function ensureDataFile() {
 function readTransactions() {
   ensureDataFile();
   try {
-    return JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
+    const transactions = JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
+    if (!Array.isArray(transactions)) return [];
+    return transactions.map((transaction) => ({
+      ...transaction,
+      date: normalizeDateValue(transaction.date)
+    }));
   } catch {
     return [];
   }
@@ -107,11 +112,19 @@ async function syncToGoogleSheets(transaction) {
   };
 }
 
+function normalizeDateValue(value) {
+  const text = String(value || "");
+  const dateOnly = text.match(/^\d{4}-\d{2}-\d{2}/);
+  if (dateOnly) return dateOnly[0];
+  const parsed = new Date(text);
+  return Number.isNaN(parsed.getTime()) ? "" : parsed.toISOString().slice(0, 10);
+}
+
 function mapRemoteTransaction(row) {
   return {
     id: row.id || row.ID || `sheet_${row.createdAt || row["Created At"] || Math.random()}`,
     createdAt: row.createdAt || row["Created At"] || new Date().toISOString(),
-    date: row.date || row.Tanggal || "",
+    date: normalizeDateValue(row.date || row.Tanggal || ""),
     type: row.type || row.Tipe || "expense",
     category: row.category || row.Kategori || "",
     description: row.description || row.Deskripsi || "",

@@ -43,8 +43,14 @@ function toDateInput(date = new Date()) {
 
 function parseDate(dateString) {
   if (dateString instanceof Date) return dateString;
-  const [year, month, day] = String(dateString).split("-").map(Number);
-  return new Date(year, month - 1, day);
+  const value = String(dateString || "");
+  const dateOnly = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (dateOnly) {
+    const [, year, month, day] = dateOnly;
+    return new Date(Number(year), Number(month) - 1, Number(day));
+  }
+  const fallback = new Date(value);
+  return Number.isNaN(fallback.getTime()) ? new Date() : fallback;
 }
 
 function formatDate(dateString) {
